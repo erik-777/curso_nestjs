@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { CarsService } from './cars.service';
 
 @Controller('cars')
@@ -10,7 +10,10 @@ export class CarsController {
   }
 
   @Get(':id')
-  getCarById(@Param('id') id: number) {
-    return this.carsService.getCarById(+id);
+  getCarById(@Param('id', ParseIntPipe) id: number) {
+    console.log(id);
+    /**Exception not controlled */
+   // throw new Error('Method not implemented.');
+    return this.carsService.getCarById(id);
   }
 }
