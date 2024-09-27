@@ -1,5 +1,6 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { CarsService } from './cars.service';
+import { CreateCarDto } from './dto/index';
 
 @Controller('cars')
 export class CarsController {
@@ -9,11 +10,16 @@ export class CarsController {
     return this.carsService.findAll();
   }
 
-  @Get(':id')
-  getCarById(@Param('id', ParseIntPipe) id: number) {
-    console.log(id);
+  @Get(':uuid')
+  getCarById(@Param('uuid', ParseIntPipe) uuid: string) {
+
     /**Exception not controlled */
-   // throw new Error('Method not implemented.');
-    return this.carsService.getCarById(id);
+    // throw new Error('Method not implemented.');
+    return this.carsService.getCarById(uuid);
+  }
+  @Post()
+  createCar(@Body() createCarDto: CreateCarDto) {
+    return this.carsService.createCar(createCarDto)
+
   }
 }
