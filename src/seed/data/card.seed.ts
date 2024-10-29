@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
 import { Car } from "src/cars/interfaces/car.inteface";
 
-export const CARS_SEED: Car[ ] = [
+export const CARS_SEED: Car[] = [
     {
         uuid: uuid(4),
         name: 'Ford',
@@ -15,4 +15,13 @@ export const CARS_SEED: Car[ ] = [
         model: 'Camaro',
         marca: 'Chevrolet',
         valor: 3000
-    }]
+    },
+    {
+
+        uuid: uuid(4),
+        name: 'Nissan',
+        model: 'Sentra',
+        marca: 'Nissan',
+        valor: 4000
+    }
+]

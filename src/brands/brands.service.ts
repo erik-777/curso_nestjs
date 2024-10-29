@@ -28,6 +28,10 @@ export class BrandsService {
     return `This action removes a #${id} brand`;
   }
   fillBrandWithSeedData(brands: Brand[]) {
-    this.brands = brands
+    //this.brands = brands
+    brands.forEach((brand) => {
+      this.brands.push(brand)
+    })
+
   }
 }
