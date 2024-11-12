@@ -12,4 +12,4 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
       MONGO_DATABASE: nest-pokemon
     volumes:
-      - ./mongo:/data/db
+      - ../../mongo:/data/db
