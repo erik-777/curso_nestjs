@@ -1,26 +1,66 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { isValidObjectId, Model } from 'mongoose';
+import { Pokemon } from './entities/pokemon.entity';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class PokemonService {
 
-  
-  create(createPokemonDto: CreatePokemonDto) {
+  constructor(
+    @InjectModel(Pokemon.name)
+    private readonly pokemonModel: Model<Pokemon>
+  ) {
+
+  }
+
+  async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLowerCase();
-    return createPokemonDto;
+    const pokemon = await this.pokemonModel.create(createPokemonDto);
+
+    return pokemon;
   }
 
-  findAll() {
-    return `This action returns all pokemon`;
+  async findAll() {
+
+    const pokemons = await this.pokemonModel.find();
+
+    return pokemons;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pokemon`;
+  async findOne(term: string) {
+
+    let pokemon: Pokemon;
+
+    if (!isNaN(+term)) {
+
+      pokemon = await this.pokemonModel.findOne({ no: term });
+
+    }
+
+    if (!pokemon && isValidObjectId(term)) {
+
+      pokemon = await this.pokemonModel.findById(term)
+
+    }
+
+    if (!pokemon) throw new NotFoundException(`Pokemon with id, name or no "${term}" not found`);
+
+    return pokemon;
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`;
+  async update(term: string, updatePokemonDto: UpdatePokemonDto) {
+
+    const pokemon = await this.findOne(term);
+
+    if (updatePokemonDto.name) updatePokemonDto.name = updatePokemonDto.name.toLowerCase();
+
+    await pokemon.updateOne(updatePokemonDto);
+    
+    return { ...pokemon.toJSON(), ...updatePokemonDto }
+
+    return `This action updates a #${term} pokemon`;
   }
 
   remove(id: number) {
