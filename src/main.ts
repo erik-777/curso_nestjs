@@ -4,6 +4,10 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function main() {
   const app = await NestFactory.create(AppModule);
+
+  //api v1
+  app.setGlobalPrefix('api/v1');
+
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true
