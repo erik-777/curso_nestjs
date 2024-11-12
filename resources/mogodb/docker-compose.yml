@@ -1,12 +1,17 @@
 # Use root/example as user/password credentials
+# docker compose up -d
 version: '3.1'
 
 services:
   db:
     image: mongo:5
     restart: always
+    hostname: mongo-db
+    container_name: db-mongo-pokemon
+    expose:
+      - "27018"
     ports:
-      - "27018:27018"
+      - "27018:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example

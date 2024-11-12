@@ -34,8 +34,12 @@ $ npm install
 
 ## Running the app
 
+1. Clonar el repositorio
+2. Ejecutar
+
 ```bash
 # development
+
 $ npm run start
 
 # watch mode
@@ -43,6 +47,23 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+```
+
+3. Tener Nest CLI Instalado
+
+```bash
+
+$ npm i -g @nestjs/cli
+
+```
+
+4. levantar la base de datos
+
+```bash
+$ cd resources/mondodb
+
+$ docker-compose up -d
+
 ```
 
 ## Test
@@ -58,16 +79,9 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Stack Usado
+* Mongodb.
+* Nestjs.
+* TypeScript
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
