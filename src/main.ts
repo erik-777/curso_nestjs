@@ -8,6 +8,7 @@ async function main() {
     whitelist: true,
     forbidNonWhitelisted: true
   }))
-  await app.listen(3000);
+  await app.listen(3001);
+
 }
 main();
