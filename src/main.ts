@@ -10,7 +10,11 @@ async function main() {
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
-    forbidNonWhitelisted: true
+    forbidNonWhitelisted: true,
+    transform: true, // para transformar los datos de los dtos
+    transformOptions: {
+      enableImplicitConversion: true
+    }
   }))
   await app.listen(3001);
 
