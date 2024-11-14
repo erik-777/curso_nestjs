@@ -66,6 +66,14 @@ $ docker-compose up -d
 
 ```
 
+
+
+5. llenar la base de datos
+
+```
+http://localhost:port/api/v2/seed
+```
+
 ## Test
 
 ```bash
