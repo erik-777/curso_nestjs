@@ -20,23 +20,21 @@ export class SeedService {
 
     await this.pokemonService.removeAll(); //delete all pokemons
 
-    const { data } = await this.axios.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=10'); //getting 10 pokemons
+    const { data } = await this.axios.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=600'); //getting 10 pokemons
 
-    const insertPromises = [];
+    const pokemonsToInsert: { name: string, no: number }[] = [];
 
     data.results.map(async ({ name, url }) => {
 
       const segments = url.split('/');
 
       const no: number = +segments[segments.length - 2]; // getting the id from the url 
-
-      //await this.pokemonService.create({ name, no });
-
-      insertPromises.push(this.pokemonService.create({ name, no }));
+ 
+      pokemonsToInsert.push({ name, no });
 
     })
 
-    await Promise.all(insertPromises);
+    await this.pokemonService.insertMany(pokemonsToInsert);
 
     return data.results
   }
