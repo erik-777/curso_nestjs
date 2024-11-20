@@ -3,6 +3,7 @@
 /node_modules
 /build
 /mongo
+/docker/postgresql-db/data
 
 # Logs
 logs
