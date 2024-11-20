@@ -18,7 +18,7 @@ async function main() {
   }))
   await app.listen(3001);
   console.log(`App running on port ${await app.getUrl()}`);
-  console.log(process.env)
+  //console.log(process.env)
 
 }
 main();

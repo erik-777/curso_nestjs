@@ -33,7 +33,6 @@ export class PokemonService {
 
     const { limit = 10, offset = 0 } = pagitationDto;
 
-
     const pokemons = await this.pokemonModel.find().limit(limit).skip(offset).sort({ no: 1 }).select('-__v');
 
     return pokemons;
@@ -66,12 +65,12 @@ export class PokemonService {
 
     if (updatePokemonDto.name) updatePokemonDto.name = updatePokemonDto.name.toLowerCase();
 
-
-
     try {
 
       await pokemon.updateOne(updatePokemonDto);
+
       return { ...pokemon.toJSON(), ...updatePokemonDto }
+
     } catch (error) {
 
       this.handleExceptions(error);
@@ -106,8 +105,11 @@ export class PokemonService {
   }
 
   private handleExceptions(error: any) {
+
     if (error.code === 11000) {
+
       throw new BadRequestException('Pokemon exists in db');
+      
     }
     console.log(error);
     throw new InternalServerErrorException('Something went wrong');

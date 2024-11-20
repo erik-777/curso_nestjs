@@ -18,7 +18,9 @@ import { ConfigModule } from '@nestjs/config';
     ),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public')
-    }), MongooseModule.forRoot('mongodb://pokedex_user:admin12345@10.0.102.9:27018/pokedex'),
+    }), 
+    MongooseModule.forRoot('mongodb://pokedex_user:admin12345@10.0.102.9:27018/pokedex'),
+    //MongooseModule.forRoot('mongodb://mongo:nUhKoMnRnUbvpnUbwNnvyofqxLwYmCZB@junction.proxy.rlwy.net:32000/pokedex'),
     PokemonModule,
     CommonModule,
     SeedModule],
