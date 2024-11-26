@@ -19,7 +19,7 @@ export class ProductsService {
   }
   async create(createProductDto: CreateProductDto) {
     try {
-     // if (!createProductDto.slug) createProductDto.slug = createProductDto.title.toLowerCase().replaceAll(' ', '_');
+      // if (!createProductDto.slug) createProductDto.slug = createProductDto.title.toLowerCase().replaceAll(' ', '_');
       const product = this.productsRepository.create(createProductDto);
 
       await this.productsRepository.save(product);
@@ -40,20 +40,34 @@ export class ProductsService {
       const products = await this.productsRepository.find();
       return products;
     } catch (error) {
-      throw new InternalServerErrorException('Error getting products');
+
+      this.handleException(error);
+
     }
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+   
+      const product = await this.productsRepository.findOneBy({ id });
+      if (!product) throw new BadRequestException(`Product with id: ${id} not found`);
+      return product;
+
+    
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product `;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    try {
+      const product = await this.findOne(id);
+
+      await this.productsRepository.remove(product);
+
+    } catch (error) {
+      this.handleException(error);
+    }
   }
   private handleException(error: any,) {
 
