@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { validate as isUUID } from 'uuid';
 
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
@@ -19,7 +19,9 @@ export class ProductsService {
     private readonly productsRepository: Repository<Product>,
 
     @InjectRepository(ProductImage)
-    private readonly productImageRepository: Repository<ProductImage>
+    private readonly productImageRepository: Repository<ProductImage>,
+
+    private readonly dataSource: DataSource
 
   ) {
 
@@ -100,25 +102,53 @@ export class ProductsService {
     return {
       ...rest, images: images.map(image => image.url)
     };
-  } 
+  }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
 
+
+    const { images, ...toUpdate } = updateProductDto;
+
     const product = await this.productsRepository.preload({
       id,
-      ...updateProductDto, images: []
+      ...toUpdate
     });
 
-    if (!product) throw new NotFoundException(`Product with  ${id} not found`);
+    if (!product) throw new NotFoundException(`Product with id ${id} not found`);
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+
+    await queryRunner.startTransaction();
+
+    //create query runner
+
 
     try {
-      await this.productsRepository.save(product);
+      if (images) {
+        await queryRunner.manager.delete(ProductImage, { product: { id } })
 
-      return product;
+        product.images = images.map(image => this.productImageRepository.create({ url: image }))
+
+
+
+      }
+      await queryRunner.manager.save(product);
+
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
+      return this.findOnePlain(id);
 
     } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
       this.handleException(error);
+
+
+
     }
+
 
 
   }
@@ -134,6 +164,22 @@ export class ProductsService {
       this.handleException(error);
     }
   }
+  
+  async deletaAllProducts() {
+    const queryBuilder = this.productsRepository.createQueryBuilder('product');
+
+    try {
+
+      return await queryBuilder
+        .delete()
+        .where({})
+        .execute();
+
+    } catch (error) {
+      this.handleException(error);
+    }
+  }
+
   private handleException(error: any,) {
 
     if (error.code === '23505') throw new BadRequestException(error.detail);
