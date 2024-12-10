@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -40,12 +40,16 @@ export class ProductsService {
 
   async findAll(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
+    
     try {
+      
       const products = await this.productsRepository.find({
         take: limit,
         skip: offset
       });
+      
       return products;
+    
     } catch (error) {
 
       this.handleException(error);
@@ -57,23 +61,44 @@ export class ProductsService {
 
     let product: Product;
 
-
     if (isUUID(term)) {
+
       product = await this.productsRepository.findOneBy({ id: term });
+
     } else {
+
       const queryBuilder = this.productsRepository.createQueryBuilder()
+
       product = await queryBuilder.where(`UPPER(title) =:title or slug =:slug`, { title: term.toUpperCase(), slug: term.toLowerCase() }).getOne();
+
     }
 
-
     if (!product) throw new BadRequestException(`Product with  ${term} not found`);
+
     return product;
 
 
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product `;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+
+    const product = await this.productsRepository.preload({
+      id,
+      ...updateProductDto
+    });
+
+    if (!product) throw new NotFoundException(`Product with  ${id} not found`);
+
+    try {
+      await this.productsRepository.save(product);
+
+      return product;
+
+    } catch (error) {
+      this.handleException(error);
+    }
+
+
   }
 
   async remove(id: string) {
@@ -83,14 +108,14 @@ export class ProductsService {
       await this.productsRepository.remove(product);
 
     } catch (error) {
+
       this.handleException(error);
     }
   }
   private handleException(error: any,) {
 
-
-
     if (error.code === '23505') throw new BadRequestException(error.detail);
+
     this.logger.error(error);
 
     throw new InternalServerErrorException('Unexpected error, check service');
