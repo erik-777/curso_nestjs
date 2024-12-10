@@ -1,11 +1,13 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
+import { Product } from './entities/product.entity';
+import { validate as isUUID } from 'uuid';
 
 @Injectable()
 export class ProductsService {
@@ -53,8 +55,17 @@ export class ProductsService {
 
   async findOne(term: string) {
 
-    const product = await this.productsRepository.findOneBy({ term });
-    if (!product) throw new BadRequestException(`Product with id: ${term} not found`);
+    let product: Product;
+
+    if (isUUID(term)) {
+      product = await this.productsRepository.findOneBy({ id: term });
+    }else {
+      product = await this.productsRepository.findOneBy({ slug: term });
+    }
+
+
+    
+    if (!product) throw new BadRequestException(`Product with  ${term} not found`);
     return product;
 
 
