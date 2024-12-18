@@ -32,7 +32,7 @@ export class ProductsService {
       const { images = [], ...productDetails } = createProductDto;
       // if (!createProductDto.slug) createProductDto.slug = createProductDto.title.toLowerCase().replaceAll(' ', '_');
       const product = this.productsRepository.create({
-        ...productDetails, images: images.map(image => this.productImageRepository.create({ url: image }))
+        ...productDetails, images: images.map(image => this.productImageRepository.create({ url: `http://10.0.102.9:3000/api/v1/files/product/${image}` }))
       });
 
       await this.productsRepository.save(product);
@@ -164,7 +164,7 @@ export class ProductsService {
       this.handleException(error);
     }
   }
-  
+
   async deletaAllProducts() {
     const queryBuilder = this.productsRepository.createQueryBuilder('product');
 
