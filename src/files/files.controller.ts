@@ -1,6 +1,7 @@
-import { Controller, Post,  UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { fileFilter } from './helpers/file.filter';
 
 
 @Controller('files')
@@ -8,10 +9,19 @@ export class FilesController {
   constructor(private readonly filesService: FilesService) { }
 
   @Post('product')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    fileFilter: fileFilter
+  }))
   upload(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
-    return file;
+
+    if (!file) {
+      throw new BadRequestException('Invalid file format');
+    }
+    //console.log(file);
+    return {
+      name: file.originalname,
+      size: file.size.toPrecision(2)
+    };
 
   }
 }
