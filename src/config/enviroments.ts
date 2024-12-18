@@ -4,23 +4,27 @@ import * as Joi from "joi";
 
 
 interface EnviromentsVariable {
-  SERVER_PORT: number;
+
   POSTGRES_HOST: string;
   POSTGRES_PORT: number;
   POSTGRES_USER: string;
   POSTGRES_PASSWORD: string;
   POSTGRES_DB: string
+  SERVER_PORT: number;
+  SERVER_API: string
 }
 
 
 export const validateEnviromentVariables = Joi.object<EnviromentsVariable>({
 
-  SERVER_PORT: Joi.number().required(),
+
   POSTGRES_HOST: Joi.string().required(),
   POSTGRES_PORT: Joi.number().required(),
   POSTGRES_USER: Joi.string().required(),
   POSTGRES_PASSWORD: Joi.string().required(),
   POSTGRES_DB: Joi.string().required(),
+  SERVER_PORT: Joi.number().required(),
+  SERVER_API: Joi.string().required()
 
 
 
@@ -35,7 +39,10 @@ if (error) {
 const envVar: EnviromentsVariable = value;
 
 export const envs = {
-  server_port: envVar.SERVER_PORT,
+  server:{
+    port: envVar.SERVER_PORT,
+    api: envVar.SERVER_API
+  },
   database: {
     user: envVar.POSTGRES_USER,
     password: envVar.POSTGRES_PASSWORD,

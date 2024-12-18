@@ -4,6 +4,7 @@
 /build
 /mongo
 /docker/postgresql-db/data
+/public
 
 # Logs
 logs

@@ -20,7 +20,7 @@ async function main() {
 
   app.setGlobalPrefix('api/v1');
 
-  await app.listen(envs.server_port);
+  await app.listen(envs.server.port);
 
   logger.log(`Application is running on: ${await app.getUrl()}`);
 
