@@ -2,8 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } fro
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from './decorator/get-user.decorator';
+
 import { User } from './entities/auth.entity';
+import { GetRawHeader, GetUser } from './decorator';
+
+
 
 @Controller('auth')
 export class AuthController {
@@ -24,18 +27,24 @@ export class AuthController {
 
   //testAuth(@Req() request: Express.Request) {
 
-  testAuth(@GetUser() user: User) {
-    console.log(user);
+  testAuth(
+    @GetUser() user: User,
+    @GetUser('email') userEmail: string,
+    @Req() request: Express.Request,
+    @GetRawHeader('authorization') rawHeader: string[]
+  ) {
+    console.log(request);
+    console.log(rawHeader);
     // const user = request.user;
 
-   // console.log(user);
+    // console.log(user);
 
     return {
       ok: true,
-      msg: 'Private route, este es tu token',
-
-
-    }
+      message: 'Private route',
+      user,
+      userEmail, rawHeader
+    };
 
 
   }
