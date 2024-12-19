@@ -12,6 +12,7 @@ interface EnviromentsVariable {
   POSTGRES_DB: string
   SERVER_PORT: number;
   SERVER_API: string
+  JWT_SECRET: string
 }
 
 
@@ -24,7 +25,8 @@ export const validateEnviromentVariables = Joi.object<EnviromentsVariable>({
   POSTGRES_PASSWORD: Joi.string().required(),
   POSTGRES_DB: Joi.string().required(),
   SERVER_PORT: Joi.number().required(),
-  SERVER_API: Joi.string().required()
+  SERVER_API: Joi.string().required(),
+  JWT_SECRET: Joi.string().required()
 
 
 
@@ -49,5 +51,8 @@ export const envs = {
     database: envVar.POSTGRES_DB,
     host: envVar.POSTGRES_HOST,
     port: envVar.POSTGRES_PORT
+  },
+  jwt: {
+    secret: envVar.JWT_SECRET
   }
 }
